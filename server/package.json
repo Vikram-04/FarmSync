@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "seed": "node src/data/seed.js"
+    "geocode": "node src/data/geocodeDistricts.js",
+    "seed-data": "node src/data/seedReferenceData.js",
+    "prune-crops": "node src/data/pruneUnpricedCrops.js",
+    "seed-mandis": "node src/data/seedMandis.js"
   },
   "dependencies": {
     "axios": "^1.6.0",
