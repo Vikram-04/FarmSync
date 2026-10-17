@@ -9,16 +9,17 @@ const expenseSchema = new mongoose.Schema({
   category: {
     type: String,
     required: [true, 'Category is required'],
-    enum: ['Seeds', 'Fertilizers', 'Pesticides', 'Labour', 'Irrigation', 'Equipment', 'Transport', 'Other'],
+    enum: ['seeds', 'fertilizer', 'pesticide', 'labour', 'irrigation', 'machinery', 'other'],
   },
   amount: {
     type: Number,
     required: [true, 'Amount is required'],
-    min: [0, 'Amount must be positive'],
+    min: [0, 'Amount must not be negative'],
   },
   date: {
     type: Date,
-    required: [true, 'Date is required'],
+    required: false,
+    default: Date.now,
   },
   note: {
     type: String,
