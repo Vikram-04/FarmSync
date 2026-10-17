@@ -6,7 +6,7 @@ const router = express.Router();
 // GET /api/users/me
 router.get('/me', auth, async (req, res) => {
   try {
-    res.json(req.user);
+    res.json(await req.user.populate('stateId districtId'));
   } catch (error) {
     console.error('Get profile error:', error);
     res.status(500).json({ message: 'Server error' });
@@ -16,10 +16,14 @@ router.get('/me', auth, async (req, res) => {
 // PUT /api/users/me
 router.put('/me', auth, async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, farmName, stateId, districtId, address } = req.body;
 
     const updates = {};
     if (name !== undefined) updates.name = name;
+    if (farmName !== undefined) updates.farmName = farmName;
+    if (stateId !== undefined) updates.stateId = stateId || null;
+    if (districtId !== undefined) updates.districtId = districtId || null;
+    if (address !== undefined) updates.address = address;
 
     const user = await req.user.constructor.findByIdAndUpdate(
       req.user._id,
@@ -27,7 +31,7 @@ router.put('/me', auth, async (req, res) => {
       { new: true, runValidators: true }
     ).select('-passwordHash');
 
-    res.json(user);
+    res.json(await user.populate('stateId districtId'));
   } catch (error) {
     console.error('Update profile error:', error);
     res.status(500).json({ message: 'Server error' });

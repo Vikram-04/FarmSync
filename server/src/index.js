@@ -35,12 +35,12 @@ app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
 // Mount routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-app.use('/api/cycles', cycleRoutes);
 app.use('/api/meta', metaRoutes);
 app.use('/api', cycleDataRoutes);
 app.use('/api', diseaseRoutes);
 app.use('/api', expenseRoutes);
 app.use('/api', saleRoutes);
+app.use('/api/cycles', cycleRoutes);
 
 cron.schedule('0 18 * * *', () => updateAllCyclePrices(), { timezone: 'Asia/Kolkata' });
 

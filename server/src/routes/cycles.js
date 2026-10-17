@@ -62,6 +62,7 @@ router.post('/', auth, async (req, res) => {
       userId: req.user._id, districtId, cropId, seasonId, mandiId,
       areaHectares: area, sowingDate: date, predictedYield,
     });
+    await req.user.constructor.findByIdAndUpdate(req.user._id, { stateId: district.stateId?._id, districtId });
     try {
       await updatePricesForCycle(cycle);
     } catch (priceError) {

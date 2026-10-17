@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  farmName: { type: String, trim: true, default: '' },
+  stateId: { type: mongoose.Schema.Types.ObjectId, ref: 'State' },
+  districtId: { type: mongoose.Schema.Types.ObjectId, ref: 'District' },
+  address: { type: String, trim: true, default: '' },
   createdAt: {
     type: Date,
     default: Date.now,
