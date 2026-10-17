@@ -9,13 +9,13 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
 import cycleRoutes from './routes/cycles.js';
-import estimationRoutes from './routes/estimations.js';
+import metaRoutes from './routes/meta.js';
+import cycleDataRoutes from './routes/cycleData.js';
 import diseaseRoutes from './routes/disease.js';
 import expenseRoutes from './routes/expenses.js';
 import saleRoutes from './routes/sales.js';
-import metaRoutes from './routes/meta.js';
-import weatherRoutes from './routes/weather.js';
-import marketPriceRoutes from './routes/marketPrices.js';
+import { updateAllCyclePrices } from './services/priceService.js';
+import cron from 'node-cron';
 
 dotenv.config();
 connectDB();
@@ -36,15 +36,13 @@ app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cycles', cycleRoutes);
-// Using '/api' for these since their internal paths include '/cycles/:id/...' or similar
-app.use('/api', estimationRoutes);
+app.use('/api/meta', metaRoutes);
+app.use('/api', cycleDataRoutes);
 app.use('/api', diseaseRoutes);
 app.use('/api', expenseRoutes);
 app.use('/api', saleRoutes);
 
-app.use('/api/meta', metaRoutes);
-app.use('/api/weather', weatherRoutes);
-app.use('/api/market-prices', marketPriceRoutes);
+cron.schedule('0 18 * * *', () => updateAllCyclePrices(), { timezone: 'Asia/Kolkata' });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

@@ -8,7 +8,7 @@ const router = express.Router();
 // POST /api/auth/register
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, phone, state, district } = req.body;
+    const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Name, email and password are required' });
@@ -26,9 +26,6 @@ router.post('/register', async (req, res) => {
       name,
       email,
       passwordHash,
-      phone: phone || '',
-      state: state || '',
-      district: district || '',
     });
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
@@ -41,9 +38,6 @@ router.post('/register', async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone,
-        state: user.state,
-        district: user.district,
       },
     });
   } catch (error) {
@@ -81,9 +75,6 @@ router.post('/login', async (req, res) => {
         _id: user._id,
         name: user.name,
         email: user.email,
-        phone: user.phone,
-        state: user.state,
-        district: user.district,
       },
     });
   } catch (error) {

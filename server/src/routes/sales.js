@@ -11,14 +11,13 @@ router.post('/cycles/:id/sales', auth, async (req, res) => {
     const cycle = await CropCycle.findOne({ _id: req.params.id, userId: req.user._id });
     if (!cycle) return res.status(404).json({ message: 'Cycle not found' });
 
-    const { quantity, unit, pricePerUnit, buyer, date } = req.body;
-    const totalAmount = quantity * pricePerUnit;
+    const { quantity, pricePerQuintal, buyer, date } = req.body;
+    const totalAmount = Number(quantity) * Number(pricePerQuintal);
 
     const sale = await Sale.create({
       cycleId: cycle._id,
       quantity,
-      unit: unit || 'quintal',
-      pricePerUnit,
+      pricePerQuintal,
       totalAmount,
       buyer: buyer || '',
       date,

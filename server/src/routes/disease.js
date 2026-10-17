@@ -38,7 +38,7 @@ const router = express.Router();
 // POST /api/cycles/:id/disease – Upload image and predict disease
 router.post('/cycles/:id/disease', auth, upload.single('image'), async (req, res) => {
   try {
-    const cycle = await CropCycle.findOne({ _id: req.params.id, userId: req.user._id });
+    const cycle = await CropCycle.findOne({ _id: req.params.id, userId: req.user._id }).populate('cropId');
     if (!cycle) return res.status(404).json({ message: 'Cycle not found' });
 
     if (!req.file) {
@@ -48,7 +48,7 @@ router.post('/cycles/:id/disease', auth, upload.single('image'), async (req, res
     const imageUrl = `/uploads/${req.file.filename}`;
 
     // Run mock disease prediction
-    const prediction = predictDisease(cycle.crop, req.file.path);
+    const prediction = predictDisease(cycle.cropId.name, req.file.path);
 
     const diseasePrediction = await DiseasePrediction.create({
       cycleId: cycle._id,

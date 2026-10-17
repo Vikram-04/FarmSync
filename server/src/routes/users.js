@@ -16,13 +16,10 @@ router.get('/me', auth, async (req, res) => {
 // PUT /api/users/me
 router.put('/me', auth, async (req, res) => {
   try {
-    const { name, phone, state, district } = req.body;
+    const { name } = req.body;
 
     const updates = {};
     if (name !== undefined) updates.name = name;
-    if (phone !== undefined) updates.phone = phone;
-    if (state !== undefined) updates.state = state;
-    if (district !== undefined) updates.district = district;
 
     const user = await req.user.constructor.findByIdAndUpdate(
       req.user._id,
