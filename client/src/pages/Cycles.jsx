@@ -1,119 +1,101 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Sprout, Plus, MapPin, Calendar, ArrowRight, Loader2 } from 'lucide-react';
+import { Sprout, Plus, Calendar, ArrowRight, Ruler } from 'lucide-react';
 import api from '../lib/api';
+import { PageLoader, ErrorBox, titleCase, shortDate } from '../components/ui';
+
+function stageBadge(cycle) {
+  if (!cycle.cropId?.durationDays) return null;
+  const progress = (Date.now() - new Date(cycle.sowingDate).getTime()) / 86400000 / cycle.cropId.durationDays;
+  let label, color;
+  if (progress < 0) { label = 'Not yet sown'; color = 'bg-slate-100 text-slate-600'; }
+  else if (progress < 0.15) { label = 'Germination'; color = 'bg-lime-50 text-lime-700 border-lime-100'; }
+  else if (progress < 0.5) { label = 'Vegetative'; color = 'bg-emerald-50 text-emerald-700 border-emerald-100'; }
+  else if (progress < 0.75) { label = 'Flowering'; color = 'bg-amber-50 text-amber-700 border-amber-100'; }
+  else if (progress < 1) { label = 'Maturity'; color = 'bg-orange-50 text-orange-700 border-orange-100'; }
+  else { label = 'Ready to harvest'; color = 'bg-brand-50 text-brand-700 border-brand-100'; }
+  return <span className={`inline-block rounded-full border px-2.5 py-0.5 text-[11px] font-semibold ${color}`}>{label}</span>;
+}
 
 export default function Cycles() {
   const [cycles, setCycles] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchCycles = async () => {
-      try {
-        const response = await api.get('/cycles');
-        setCycles(response.data);
-      } catch (err) {
-        setError('Failed to load crop cycles');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchCycles();
+    api.get('/cycles')
+      .then(({ data }) => setCycles(data))
+      .catch(() => setError('Failed to load crop cycles'))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (isLoading) {
-    return (
-      <div className="flex h-full items-center justify-center min-h-[60vh]">
-        <Loader2 className="h-8 w-8 animate-spin text-brand-500" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex h-full items-center justify-center min-h-[60vh]">
-        <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl font-medium">
-          {error}
-        </div>
-      </div>
-    );
-  }
+  if (loading) return <PageLoader />;
+  if (error) return <ErrorBox message={error} />;
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="space-y-6 animate-fade-in">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Crop Cycles</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage and track your farming seasons</p>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">My Crop Cycles</h1>
+          <p className="mt-1 text-sm text-slate-500">Manage and track your farming seasons</p>
         </div>
-        <Link
-          to="/cycles/new"
-          className="inline-flex items-center justify-center px-4 py-2.5 bg-brand-600 text-white font-medium rounded-xl hover:bg-brand-700 transition-colors shadow-sm shadow-brand-500/30"
-        >
-          <Plus className="h-5 w-5 mr-2" />
-          New Cycle
+        <Link to="/cycles/new"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-brand-600/20 transition hover:bg-brand-700">
+          <Plus className="h-4 w-4" /> New Cycle
         </Link>
       </div>
 
+      {/* Empty state */}
       {cycles.length === 0 ? (
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-12 text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-brand-50 text-brand-500 mb-4">
-            <Sprout className="h-8 w-8" />
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-50">
+            <Sprout className="h-8 w-8 text-brand-500" />
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No crop cycles yet</h3>
-          <p className="text-gray-500 max-w-sm mx-auto mb-6">
+          <h3 className="text-lg font-semibold text-slate-900">No crop cycles yet</h3>
+          <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500">
             Create your first crop cycle to start tracking weather, expenses, revenue, and disease predictions.
           </p>
-          <Link
-            to="/cycles/new"
-            className="inline-flex items-center justify-center px-4 py-2 bg-brand-50 text-brand-700 font-medium rounded-xl hover:bg-brand-100 transition-colors"
-          >
-            Create your first cycle
+          <Link to="/cycles/new"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-brand-50 px-5 py-2.5 text-sm font-semibold text-brand-700 transition hover:bg-brand-100">
+            <Plus className="h-4 w-4" /> Create your first cycle
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 stagger">
           {cycles.map((cycle) => (
-            <Link
-              key={cycle._id}
-              to={`/cycles/${cycle._id}`}
-              className="group bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:border-brand-200 transition-all duration-200 block relative overflow-hidden"
-            >
-              {/* Status indicator */}
-              <div className={`absolute top-0 right-0 w-24 h-24 -mt-12 -mr-12 rounded-full opacity-20 transition-transform group-hover:scale-110 ${
-                cycle.status === 'active' ? 'bg-brand-500' : 'bg-gray-400'
-              }`} />
-              
-              <div className="flex justify-between items-start mb-4 relative z-10">
-                <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-50 to-brand-100 text-brand-600">
-                  <Sprout className="h-6 w-6" />
-                </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  cycle.status === 'active' 
-                    ? 'bg-brand-50 text-brand-700 border border-brand-100' 
-                    : 'bg-gray-100 text-gray-700 border border-gray-200'
-                }`}>
-                  {cycle.status === 'active' ? 'Active' : 'Completed'}
-                </span>
-              </div>
-              
-              <div className="space-y-4 relative z-10">
-                <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">{cycle.cropId?.priceCommodity || cycle.crop}</h3>
-                  <div className="flex flex-wrap gap-2 text-sm text-gray-500">
-                    <span className="flex items-center"><Calendar className="w-3.5 h-3.5 mr-1" /> {cycle.seasonId?.name || cycle.season}</span>
-                    <span className="flex items-center"><MapPin className="w-3.5 h-3.5 mr-1" /> {cycle.areaHectares} ha</span>
+            <Link key={cycle._id} to={`/cycles/${cycle._id}`}
+              className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-all duration-200 hover:border-brand-200 hover:shadow-md">
+              {/* Decorative accent */}
+              <div className="absolute -right-8 -top-8 h-20 w-20 rounded-full bg-brand-50 transition-transform duration-300 group-hover:scale-150" />
+
+              <div className="relative">
+                <div className="mb-4 flex items-start justify-between">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand-50 to-brand-100 text-brand-600 shadow-sm">
+                    <Sprout className="h-5 w-5" />
                   </div>
+                  {stageBadge(cycle)}
                 </div>
-                
-                <div className="pt-4 border-t border-gray-100 flex items-center justify-between text-sm">
-                  <span className="text-gray-500">
-                    Sowed: {new Date(cycle.sowingDate).toLocaleDateString()}
+
+                <h3 className="text-lg font-bold text-slate-900">{cycle.cropId?.priceCommodity || 'Crop'}</h3>
+
+                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[13px] text-slate-500">
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-3.5 w-3.5" /> {cycle.seasonId?.name}
                   </span>
-                  <div className="flex items-center text-brand-600 font-medium group-hover:translate-x-1 transition-transform">
-                    View Dashboard <ArrowRight className="ml-1 w-4 h-4" />
-                  </div>
+                  <span className="flex items-center gap-1">
+                    <Ruler className="h-3.5 w-3.5" /> {cycle.areaHectares} ha
+                  </span>
+                </div>
+
+                <div className="mt-5 flex items-center justify-between border-t border-slate-100 pt-4">
+                  <span className="text-xs text-slate-400">
+                    Sowed {shortDate(cycle.sowingDate)}
+                    {cycle.districtId?.name && ` · ${titleCase(cycle.districtId.name)}`}
+                  </span>
+                  <span className="flex items-center gap-1 text-xs font-semibold text-brand-600 transition-transform group-hover:translate-x-1">
+                    Open <ArrowRight className="h-3.5 w-3.5" />
+                  </span>
                 </div>
               </div>
             </Link>

@@ -1,111 +1,120 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Sprout, Mail, Lock, Loader2 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
+import { ArrowRight, Leaf, Loader2, LockKeyhole, Mail } from 'lucide-react';
+import { useAuth } from '../context/useAuth';
 import api from '../lib/api';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    setLoading(true);
     setError('');
-
     try {
-      const response = await api.post('/auth/login', { email, password });
-      login(response.data.user, response.data.token);
+      const { data } = await api.post('/auth/login', form);
+      login(data.user, data.token);
       navigate('/cycles');
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to sign in');
+      setError(err.response?.data?.message || 'Unable to sign in.');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-brand-50 via-white to-brand-100">
-      {/* Decorative background blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-brand-300/30 blur-3xl mix-blend-multiply" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-brand-200/40 blur-3xl mix-blend-multiply" />
-      
-      <div className="relative w-full max-w-md px-6 py-12">
-        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl shadow-brand-500/10 p-8 border border-white/50">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-brand-400 to-brand-600 mb-6 shadow-lg shadow-brand-500/30 transform transition-transform hover:scale-105">
-              <Sprout className="w-8 h-8 text-white" />
+    <div className="grid min-h-screen lg:grid-cols-2">
+      {/* ─── Left hero panel ─── */}
+      <div className="relative hidden overflow-hidden bg-gradient-to-br from-brand-800 via-brand-700 to-teal-600 p-12 lg:flex lg:flex-col lg:justify-between">
+        {/* Decorative circles */}
+        <div className="absolute -right-24 -top-24 h-80 w-80 rounded-full bg-white/[0.07]" />
+        <div className="absolute -left-16 bottom-20 h-64 w-64 rounded-full bg-white/[0.05]" />
+        <div className="absolute right-20 bottom-40 h-40 w-40 rounded-full bg-white/[0.04]" />
+
+        <div className="relative flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
+            <Leaf className="h-6 w-6 text-white" />
+          </div>
+          <span className="text-2xl font-bold text-white">FarmSync</span>
+        </div>
+
+        <div className="relative max-w-lg">
+          <p className="mb-5 text-xs font-bold uppercase tracking-[0.3em] text-brand-200">
+            Grow with confidence
+          </p>
+          <h1 className="text-5xl font-bold leading-[1.15] text-white">
+            Your farm decisions, in one clear view.
+          </h1>
+          <p className="mt-6 text-lg leading-relaxed text-brand-100/90">
+            Track crop cycles, understand weather, follow mandi prices, and measure what your season really earns.
+          </p>
+        </div>
+
+        <p className="relative text-sm text-brand-200/80">
+          Simple tools for every growing season.
+        </p>
+      </div>
+
+      {/* ─── Right form panel ─── */}
+      <div className="flex items-center justify-center bg-slate-50 px-6 py-12">
+        <div className="w-full max-w-md animate-fade-in">
+          {/* Mobile logo */}
+          <div className="mb-10 flex items-center gap-2.5 lg:hidden">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700">
+              <Leaf className="h-5 w-5 text-white" />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Welcome back</h2>
-            <p className="text-gray-500 mt-2">Enter your details to access your farm</p>
+            <span className="text-xl font-bold text-brand-700">FarmSync</span>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="mb-9">
+            <p className="text-sm font-semibold text-brand-600">Welcome back</p>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-900">Sign in to your farm</h2>
+            <p className="mt-2 text-slate-500">Continue where you left off.</p>
+          </div>
+
+          <form onSubmit={submit} className="space-y-5">
             {error && (
-              <div className="p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm font-medium flex items-center">
+              <div className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
                 {error}
               </div>
             )}
 
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700 ml-1">Email</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-11 pr-4 py-3 rounded-xl border-gray-200 bg-white/50 border focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none"
-                  placeholder="farmer@example.com"
-                />
+            <label className="block">
+              <span className="text-sm font-semibold text-slate-700">Email</span>
+              <div className="relative mt-2">
+                <Mail className="absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slate-400" />
+                <input required type="email" placeholder="you@example.com"
+                  className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-12 pr-4 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                  value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
               </div>
-            </div>
+            </label>
 
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700 ml-1">Password</label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-11 pr-4 py-3 rounded-xl border-gray-200 bg-white/50 border focus:bg-white focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all outline-none"
-                  placeholder="••••••••"
-                />
+            <label className="block">
+              <span className="text-sm font-semibold text-slate-700">Password</span>
+              <div className="relative mt-2">
+                <LockKeyhole className="absolute left-4 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-slate-400" />
+                <input required type="password" placeholder="Your password"
+                  className="w-full rounded-xl border border-slate-200 bg-white py-3 pl-12 pr-4 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+                  value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} />
               </div>
-            </div>
+            </label>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full flex items-center justify-center py-3.5 px-4 rounded-xl text-white font-semibold bg-gradient-to-r from-brand-500 to-brand-600 hover:from-brand-600 hover:to-brand-700 focus:ring-4 focus:ring-brand-500/20 transition-all shadow-lg shadow-brand-500/30 disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
-              ) : (
-                'Sign In'
-              )}
+            <button disabled={loading}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-brand-600/20 transition hover:bg-brand-700 disabled:opacity-60">
+              {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : <>Sign in <ArrowRight className="h-4 w-4" /></>}
             </button>
           </form>
 
-          <div className="mt-8 text-center">
-            <p className="text-gray-500 text-sm">
-              Don't have an account?{' '}
-              <Link to="/register" className="font-semibold text-brand-600 hover:text-brand-700 transition-colors">
-                Register now
-              </Link>
-            </p>
-          </div>
+          <p className="mt-8 text-center text-sm text-slate-500">
+            New to FarmSync?{' '}
+            <Link className="font-semibold text-brand-700 transition hover:text-brand-800" to="/register">
+              Create an account
+            </Link>
+          </p>
         </div>
       </div>
     </div>
