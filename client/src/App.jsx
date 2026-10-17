@@ -5,8 +5,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Cycles from './pages/Cycles';
 import CreateCycle from './pages/CreateCycle';
-// import Dashboard from './pages/Dashboard';
-// import Profile from './pages/Profile';
+import CycleDetail from './pages/CycleDetail';
+import Profile from './pages/Profile';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -45,9 +45,9 @@ function AppRoutes() {
         
         <Route path="cycles" element={<Cycles />} />
         <Route path="cycles/new" element={<CreateCycle />} />
-        <Route path="cycles/:id/*" element={<div className="p-6">Cycle Detail View (Dashboard Tabs)</div>} />
+        <Route path="cycles/:id/*" element={<CycleDetail />} />
         
-        <Route path="profile" element={<div className="p-6">Profile Page</div>} />
+        <Route path="profile" element={<Profile />} />
       </Route>
     </Routes>
   );

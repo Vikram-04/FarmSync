@@ -63,7 +63,7 @@ export default function Cycles() {
           </div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">No crop cycles yet</h3>
           <p className="text-gray-500 max-w-sm mx-auto mb-6">
-            Create your first crop cycle to start tracking weather, expenses, and expected profit for this season.
+            Create your first crop cycle to start tracking weather, expenses, revenue, and disease predictions.
           </p>
           <Link
             to="/cycles/new"
@@ -100,9 +100,9 @@ export default function Cycles() {
               
               <div className="space-y-4 relative z-10">
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">{cycle.crop}</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-1">{cycle.cropId?.priceCommodity || cycle.crop}</h3>
                   <div className="flex flex-wrap gap-2 text-sm text-gray-500">
-                    <span className="flex items-center"><Calendar className="w-3.5 h-3.5 mr-1" /> {cycle.season}</span>
+                    <span className="flex items-center"><Calendar className="w-3.5 h-3.5 mr-1" /> {cycle.seasonId?.name || cycle.season}</span>
                     <span className="flex items-center"><MapPin className="w-3.5 h-3.5 mr-1" /> {cycle.areaHectares} ha</span>
                   </div>
                 </div>

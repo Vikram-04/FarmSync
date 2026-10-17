@@ -1,6 +1,6 @@
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Sprout, LayoutDashboard, User, LogOut, Menu, X } from 'lucide-react';
+import { Sprout, User, LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import clsx from 'clsx';
 
