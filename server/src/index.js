@@ -30,7 +30,7 @@ app.use(cors());
 app.use(express.json());
 
 // Static folder for uploads
-app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Mount routes
 app.use('/api/auth', authRoutes);
