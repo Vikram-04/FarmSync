@@ -26,6 +26,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Middleware
+app.use(express.static("dist"));
 app.use(cors());
 app.use(express.json());
 
