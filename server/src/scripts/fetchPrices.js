@@ -1,11 +1,14 @@
-import dotenv from 'dotenv';
+import 'dotenv/config';
 import connectDB from '../config/db.js';
 import { updateAllCyclePrices } from '../services/priceService.js';
 
-dotenv.config();
-await connectDB();
+let exitCode = 0;
 try {
+  await connectDB();
   await updateAllCyclePrices();
+} catch (error) {
+  console.error('fetch-prices failed:', error);
+  exitCode = 1;
 } finally {
-  process.exit(0);
+  process.exit(exitCode);
 }
