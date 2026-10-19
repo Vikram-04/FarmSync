@@ -11,7 +11,7 @@ import DistrictCropSeason from '../models/DistrictCropSeason.js';
 import DiseasePrediction from '../models/DiseasePrediction.js';
 import Expense from '../models/Expense.js';
 import Sale from '../models/Sale.js';
-import { predictYield } from '../services/mockYieldPrediction.js';
+import { predictYield } from '../services/yieldPrediction.js';
 import { updatePricesForCycle } from '../services/priceService.js';
 
 const router = express.Router();
@@ -23,7 +23,7 @@ async function ownedCycle(id, userId) {
 }
 
 // Create a cycle from seeded reference ids. Reference combinations are validated
-// before the mocked yield service is called.
+// before the yield service is called.
 router.post('/', auth, async (req, res) => {
   try {
     const { districtId, cropId, seasonId, mandiId, areaHectares, sowingDate } = req.body;
@@ -56,6 +56,7 @@ router.post('/', auth, async (req, res) => {
       district: district.name,
       crop: crop.name,
       season: season.name,
+      year: date.getFullYear(),
       area,
     });
     const cycle = await CropCycle.create({
@@ -72,6 +73,7 @@ router.post('/', auth, async (req, res) => {
       .populate('districtId cropId seasonId mandiId').lean();
     res.status(201).json(result);
   } catch (error) {
+    if (error.statusCode) return res.status(error.statusCode).json({ message: error.message });
     console.error('Create cycle error:', error);
     res.status(500).json({ message: 'Server error' });
   }
