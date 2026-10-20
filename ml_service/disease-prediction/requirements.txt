@@ -1,9 +1,10 @@
-numpy
-pillow
-scikit-learn
-joblib
-torch
-torchvision>=0.13
+--extra-index-url https://download.pytorch.org/whl/cpu
+numpy==2.5.4
+pillow==13.0.0
+scikit-learn==1.9.1
+joblib==1.6.0
+torch==2.14.1
+torchvision==0.29.1
 fastapi
 uvicorn[standard]
 python-multipart

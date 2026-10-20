@@ -1,5 +1,6 @@
-*/__pycache__
-*/color
-*/venv
-*/crop_production*.csv
-*/meta.json
+color/
+__pycache__/
+venv/
+.venv/
+*.csv
+*.npz

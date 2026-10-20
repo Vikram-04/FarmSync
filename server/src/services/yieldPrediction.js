@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const serviceUrl = process.env.YIELD_SERVICE_URL || 'http://127.0.0.1:8001';
+const serviceUrl = process.env.YIELD_SERVICE_URL || 'http://127.0.0.1:8000';
 
 export class YieldPredictionError extends Error {
   constructor(message) {
