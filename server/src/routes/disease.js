@@ -5,7 +5,8 @@ import { fileURLToPath } from 'url';
 import auth from '../middleware/auth.js';
 import CropCycle from '../models/CropCycle.js';
 import DiseasePrediction from '../models/DiseasePrediction.js';
-import { predictDisease } from '../services/mockDiseasePrediction.js';
+import { plantVillageCrop } from '../config/diseaseCrops.js';
+import { predictDisease } from '../services/diseasePrediction.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -45,10 +46,13 @@ router.post('/cycles/:id/disease', auth, upload.single('image'), async (req, res
       return res.status(400).json({ message: 'Image file is required' });
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
+    const diseaseCrop = plantVillageCrop(cycle.cropId.name);
+    if (!diseaseCrop) {
+      return res.status(400).json({ message: 'Disease prediction is currently available for maize, grapes, potato, and tomato.' });
+    }
 
-    // Run mock disease prediction
-    const prediction = predictDisease(cycle.cropId.name, req.file.path);
+    const imageUrl = `/uploads/${req.file.filename}`;
+    const prediction = await predictDisease({ crop: diseaseCrop, imagePath: req.file.path });
 
     const diseasePrediction = await DiseasePrediction.create({
       cycleId: cycle._id,
@@ -60,7 +64,7 @@ router.post('/cycles/:id/disease', auth, upload.single('image'), async (req, res
     res.status(201).json(diseasePrediction);
   } catch (error) {
     console.error('Disease prediction error:', error);
-    res.status(500).json({ message: error.message || 'Server error' });
+    res.status(error.statusCode || 500).json({ message: error.message || 'Server error' });
   }
 });
 

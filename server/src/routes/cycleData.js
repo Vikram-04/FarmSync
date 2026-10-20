@@ -6,6 +6,7 @@ import Expense from '../models/Expense.js';
 import Sale from '../models/Sale.js';
 import DiseasePrediction from '../models/DiseasePrediction.js';
 import { fetchWeather } from '../services/weatherService.js';
+import { plantVillageCrop } from '../config/diseaseCrops.js';
 
 const router = express.Router();
 const owned = (id, userId) => CropCycle.findOne({ _id: id, userId }).populate('districtId cropId seasonId mandiId');
@@ -62,7 +63,7 @@ router.get('/cycles/:id/dashboard', auth, async (req, res) => {
     fetchWeather(cycle.districtId.lat, cycle.districtId.lon),
   ]);
   const latestDisease = await DiseasePrediction.findOne({ cycleId: cycle._id }).sort({ createdAt: -1 }).lean();
-  res.json({ stage: stage(cycle), predictedYield: cycle.predictedYield, predictedProduction, currentPrice: price?.price ?? null, arrivalDate: price?.arrivalDate ?? null, currentRevenue: price ? predictedProduction * 10 * price.price : null, totalExpenses: expenses[0]?.total || 0, totalSales: sales[0]?.total || 0, actualProfit: (sales[0]?.total || 0) - (expenses[0]?.total || 0), latestDisease, weather });
+  res.json({ stage: stage(cycle), predictedYield: cycle.predictedYield, predictedProduction, currentPrice: price?.price ?? null, arrivalDate: price?.arrivalDate ?? null, currentRevenue: price ? predictedProduction * 10 * price.price : null, totalExpenses: expenses[0]?.total || 0, totalSales: sales[0]?.total || 0, actualProfit: (sales[0]?.total || 0) - (expenses[0]?.total || 0), latestDisease, diseaseSupported: Boolean(plantVillageCrop(cycle.cropId.name)), weather });
 });
 
 export default router;
