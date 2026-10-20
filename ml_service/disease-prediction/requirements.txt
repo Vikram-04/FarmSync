@@ -1,0 +1,9 @@
+numpy
+pillow
+scikit-learn
+joblib
+torch
+torchvision>=0.13
+fastapi
+uvicorn[standard]
+python-multipart
