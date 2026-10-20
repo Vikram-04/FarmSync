@@ -26,12 +26,14 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Middleware
-app.use(express.static("dist"));
 app.use(cors());
 app.use(express.json());
 
 // Static folder for uploads
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+const clientDist = path.join(__dirname, '../dist');
+app.use(express.static(clientDist));
 
 // Mount routes
 app.use('/api/auth', authRoutes);
@@ -44,6 +46,11 @@ app.use('/api', saleRoutes);
 app.use('/api/cycles', cycleRoutes);
 
 cron.schedule('0 18 * * *', () => updateAllCyclePrices(), { timezone: 'Asia/Kolkata' });
+
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/') || path.extname(req.path)) return next();
+  res.sendFile(path.join(clientDist, 'index.html'));
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
