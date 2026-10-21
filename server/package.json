@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "nodemon src/index.js",
+    "dev": "NODE_ENV=development nodemon src/index.js",
     "start": "node src/index.js",
     "fetch-prices": "node src/scripts/fetchPrices.js"
   },
