@@ -1,7 +1,8 @@
 import axios from "axios";
 import FormData from "form-data";
 import fs from "fs";
-
+import dotenv from 'dotenv';
+dotenv.config();
 const serviceUrl = process.env.NODE_ENV === "development" ? "http://127.0.0.1:8001" : process.env.DISEASE_SERVICE_URL;
 
 export class DiseasePredictionError extends Error {

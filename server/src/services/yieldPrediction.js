@@ -1,5 +1,6 @@
 import axios from 'axios';
-
+import dotenv from 'dotenv';
+dotenv.config();
 const serviceUrl = process.env.NODE_ENV === "development" ? "http://127.0.0.1:8000" : process.env.YIELD_SERVICE_URL;
 
 export class YieldPredictionError extends Error {
