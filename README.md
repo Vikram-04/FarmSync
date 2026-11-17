@@ -21,6 +21,7 @@ ml_service/
   yield-prediction/    FastAPI + scikit-learn (HistGradientBoosting)
   disease-prediction/  FastAPI + MobileNetV2 embeddings + logistic regression
 ```
+<img width="8267" height="8414" alt="diagram" src="https://github.com/user-attachments/assets/b5459bd0-fa37-4f1a-b5c7-e38053a3bcf3" />
 
 ## Setup
 
