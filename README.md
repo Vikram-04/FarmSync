@@ -64,6 +64,4 @@ React, Vite, Tailwind, Node.js, Express, MongoDB, FastAPI, scikit-learn, PyTorch
 <img width="1510" height="796" alt="graph" src="https://github.com/user-attachments/assets/5c99119a-2f65-461e-8c44-2822b4f6519e" />
 <img width="1520" height="802" alt="disease" src="https://github.com/user-attachments/assets/623736f4-9128-48cd-bc56-d7b1317b9bb1" />
 
-
-
-
+### Deployed application link: https://farmsync-server.onrender.com/
