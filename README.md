@@ -56,3 +56,14 @@ cd server && npm run fetch-prices
 ## Tech Stack
 
 React, Vite, Tailwind, Node.js, Express, MongoDB, FastAPI, scikit-learn, PyTorch
+
+## Screenshots
+<img width="988" height="808" alt="create-cycle" src="https://github.com/user-attachments/assets/5d44d0b7-fa2b-4658-955e-7ad74ef49cf1" />
+<img width="1917" height="916" alt="cycles" src="https://github.com/user-attachments/assets/580ce245-b5c8-474d-bb3d-be7efefac247" />
+<img width="1031" height="912" alt="dashboard" src="https://github.com/user-attachments/assets/cf13eaac-47cf-4482-89ce-da0b618b81c7" />
+<img width="1510" height="796" alt="graph" src="https://github.com/user-attachments/assets/5c99119a-2f65-461e-8c44-2822b4f6519e" />
+<img width="1520" height="802" alt="disease" src="https://github.com/user-attachments/assets/623736f4-9128-48cd-bc56-d7b1317b9bb1" />
+
+
+
+
